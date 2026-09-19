@@ -1,0 +1,12 @@
+{
+  "name": "repro-publicidad",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "concurrently -n server,panel,player -c blue,green,magenta \"npm run dev --prefix apps/server\" \"npm run dev --prefix apps/panel\" \"npm run dev --prefix apps/player\"",
+    "build": "npm run build --prefix apps/server && npm run build --prefix apps/panel && npm run build --prefix apps/player"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
