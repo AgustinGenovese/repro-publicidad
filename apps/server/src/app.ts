@@ -1,4 +1,5 @@
 import express from 'express';
+import { join } from 'node:path';
 import { mkdir } from 'node:fs/promises';
 import authRoutes from './routes/auth.js';
 import mediaRoutes from './routes/media.js';
@@ -19,6 +20,13 @@ app.get('/ping', (_req, res) => {
 });
 
 app.use('/media', express.static(config.uploadsDir));
+
+app.use('/panel', express.static(join(config.webRoot, 'panel')));
+app.use('/player', express.static(join(config.webRoot, 'player')));
+
+app.get('/', (_req, res) => {
+  res.redirect('/panel');
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/media', mediaRoutes);

@@ -13,4 +13,5 @@ export const config = {
   adminUsername: process.env.ADMIN_USERNAME || 'admin',
   adminPassword: process.env.ADMIN_PASSWORD || 'admin123',
   uploadsDir: resolve(here, '..', 'uploads'),
+  webRoot: resolve(here, '..', 'public'),
 } as const;

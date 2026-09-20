@@ -15,6 +15,19 @@ export default function Devices() {
   const [devices, setDevices] = useState<DeviceItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [copied, setCopied] = useState(false)
+
+  const playerUrl = `http://${window.location.hostname}:3000/player`
+
+  async function copyUrl() {
+    try {
+      await navigator.clipboard.writeText(playerUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      setCopied(false)
+    }
+  }
 
   const refresh = useCallback(async () => {
     try {
@@ -35,6 +48,18 @@ export default function Devices() {
 
   return (
     <div className="space-y-4">
+      <div className="border border-slate-800 bg-slate-900 rounded-xl px-4 py-3 flex items-center gap-3">
+        <p className="text-sm text-slate-400">
+          URL para los televisores:
+        </p>
+        <code className="text-sm text-cyan-300">{playerUrl}</code>
+        <button
+          onClick={copyUrl}
+          className="ml-auto px-3 py-1 rounded-lg border border-slate-700 hover:border-slate-500 text-xs text-slate-300"
+        >
+          {copied ? 'Copiada' : 'Copiar'}
+        </button>
+      </div>
       <div className="flex items-center justify-between">
         <p className="text-sm text-slate-400">
           Se actualiza cada 15 segundos. Un TV se considera <b className="text-emerald-400">online</b> si conectó en los últimos 2 minutos.

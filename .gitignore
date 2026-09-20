@@ -2,5 +2,6 @@ node_modules/
 dist/
 .env
 uploads/
+apps/server/public/
 .DS_Store
 npm-debug.log*
