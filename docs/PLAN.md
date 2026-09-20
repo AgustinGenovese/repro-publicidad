@@ -9,6 +9,7 @@ antes de pasar a la siguiente.
   `apps/player`.
 - **Backend**: Node + Express + Mongoose (MongoDB). Un único usuario admin
   (sin roles ni multi-usuario), creado por script `seed` o variables de entorno.
+  Login por **username** (no email): `ADMIN_USERNAME` + `ADMIN_PASSWORD`.
 - **Auth**: Login con JWT, password hasheado con bcrypt (convención de
   `finanzas-pwa-v2`).
 - **Player**: Solo app web responsiva (no app Android nativa por ahora).
@@ -55,7 +56,7 @@ repro-publicidad/
 
 ## Modelos de datos (MongoDB)
 
-- **User**: `{ email, passwordHash }` — único admin.
+- **User**: `{ username, passwordHash }` — único admin.
 - **Media**: `{ type: 'video'|'image', filename, originalName, mimeType, size,
   url, duration (seg, para imágenes, default 8), active }`
 - **Playlist**: `{ items: [{ mediaId, sortOrder }], version }` — una playlist
@@ -67,7 +68,7 @@ repro-publicidad/
 
 | Método | Ruta | Uso |
 |---|---|---|
-| POST | `/api/auth/login` | Login admin (JWT) |
+| POST | `/api/auth/login` | Login admin por username+password (JWT) |
 | POST | `/api/media` (multipart) | Subir video/imagen |
 | GET | `/api/media` | Listar |
 | DELETE | `/api/media/:id` | Borrar |
@@ -93,71 +94,97 @@ repro-publicidad/
 
 ### Fase 2 — Backend base
 - [x] Conexión a MongoDB con Mongoose (`db.ts`).
-- [x] `.env.example` (`MONGO_URL`, `JWT_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`).
+- [x] `.env.example` (`MONGO_URL`, `JWT_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`).
 - [x] Módulo de config leyendo variables de entorno.
 - [x] Verificación: server levanta y conecta a Mongo; `/ping` responde.
 
 **Conceptos**: Express, middleware, Mongoose, variables de entorno.
 
 ### Fase 3 — Login de único admin
-- [ ] Modelo `User`; script `seed.ts` que crea el admin (bcrypt).
-- [ ] `POST /api/auth/login` valida y devuelve JWT.
-- [ ] Middleware `authJWT` para proteger rutas del panel.
-- [ ] Verificación: login con credenciales seed devuelve token; sin token → 401.
+- [x] Modelo `User` (`{ username, passwordHash }`); script `seed.ts` que crea el
+      admin (bcrypt) desde `ADMIN_USERNAME`/`ADMIN_PASSWORD`.
+- [x] `POST /api/auth/login` valida y devuelve JWT.
+- [x] Middleware `authJWT` para proteger rutas del panel.
+- [x] Verificación: login con credenciales seed devuelve token; sin token → 401.
 
 **Conceptos**: bcrypt, JWT, protección de rutas.
 
 ### Fase 4 — Subida y listado de media
-- [ ] Modelo `Media`.
-- [ ] `POST /api/media` con multer (acepta mp4/webm/jpg/png/webp, límites).
-- [ ] `GET /api/media` y `DELETE /api/media/:id` (borra archivo + registro).
-- [ ] `express.static` sirviendo `/media/...` desde `uploads/`.
-- [ ] Verificación: subir archivo, listarlo, verlo por URL, borrarlo.
+- [x] Modelo `Media`.
+- [x] `POST /api/media` con multer (acepta mp4/webm/jpg/png/webp, límite 200 MB).
+- [x] `GET /api/media` y `DELETE /api/media/:id` (borra archivo + registro).
+- [x] `express.static` sirviendo `/media/...` desde `uploads/`.
+- [x] Verificación: subir archivo, listarlo, verlo por URL, borrarlo.
 
 **Conceptos**: multer, express.static, CRUD base.
 
 ### Fase 5 — Playlist + versionado
-- [ ] Modelo `Playlist` (una sola, `version`).
-- [ ] `GET/PUT /api/playlist` (admin, protegido).
-- [ ] `PUT` incrementa `version`.
-- [ ] `GET /api/player/playlist` pública: devuelve items activos con URLs
+- [x] Modelo `Playlist` (una sola, `version`).
+- [x] `GET/PUT /api/playlist` (admin, protegido).
+- [x] `PUT` incrementa `version`.
+- [x] `GET /api/player/playlist` pública: devuelve items activos con URLs
       absolutas y la `version` actual.
-- [ ] Verificación: armar playlist, ver que el endpoint público devuelve
-      la versión correcta.
+- [x] Verificación: armar playlist, que el endpoint público devuelve
+      la versión correcta, y que `PUT` la incrementa.
 
 **Conceptos**: modelo de playlist, control de versiones.
 
 ### Fase 6 — Dispositivos + Sincronizar
-- [ ] Modelo `Device`.
-- [ ] `POST /api/devices/register` (name+token opcional) → heartbeats
+- [x] Modelo `Device` (`{ name, token, lastSeen, currentIp }`).
+- [x] `POST /api/devices/register` (name+token opcional) → heartbeats
       (`lastSeen`).
-- [ ] `GET /api/devices` muestra TVs con online/offline (últimos 2 min).
-- [ ] `POST /api/player/sync` → `version++`.
-- [ ] Verificación: registrar un "TV" con curl, verlo online, sincronizar.
+- [x] `GET /api/devices` muestra TVs con online/offline (últimos 2 min).
+- [x] `POST /api/player/sync` → `version++`.
+- [x] Verificación: registrar un "TV" con curl, verlo online, sincronizar.
 
 **Conceptos**: registro de dispositivos, heartbeat, polling.
 
-### Fase 7 — Panel administrativo
-- [ ] Login (guarda JWT en localStorage).
-- [ ] Página Media: drag & drop de subida, grilla con preview, borrar.
-- [ ] Página Playlist: editor con orden (drag & drop simple, sin lib si se
-      puede) y botón **Sincronizar**.
-- [ ] Página Devices: lista de TVs con estado.
-- [ ] Verificación: ciclo completo desde el navegador.
+### Fase 7 — Panel base + Login
+- [x] Tema visual minimal slate (`index.css`).
+- [x] `api.ts`: cliente HTTP con JWT en localStorage y manejo de 401.
+- [x] `pages/Login.tsx` (usuario + password).
+- [x] Shell `App.tsx`: sidebar (Media / Playlist / TVs), guard de sesión,
+      logout. Vistas Media/Playlist/Devices como placeholders.
+- [x] Verificación: login ok, login inválido con error, logout, recarga
+      mantiene sesión.
 
-**Conceptos**: frontend conectado a API, drag&drop, estado de sesión.
+**Conceptos**: cliente HTTP, estado de sesión, navegación por estado.
 
-### Fase 8 — Player
-- [ ] Pantalla completa (`100dvh`), registro/identificación del dispositivo
-      (id persistente en localStorage/localstorage).
-- [ ] Loop continuo: imágenes (con duración + fade) y videos fullscreen.
-- [ ] Polling cada 30s de `/api/player/playlist`; si detecta cambio de
+### Fase 8 — Panel Media
+- [x] `UploadDropzone` (drag & drop + click, solo imágenes).
+- [x] Grilla con preview (`MediaCard`) y borrar.
+- [x] Verificación: subir/ver/borrar imágenes desde el navegador.
+
+### Fase 9 — Panel Playlist
+- [x] Editor: agregar/quitar media, reordenar (drag & drop nativo + flechas),
+      guardar PUT.
+- [x] Verificación: orden visible y `version` sube al guardar.
+
+### Fase 10 — Panel Devices + Sincronizar
+- [x] Página TVs (dot online/offline).
+- [x] Botón **Sincronizar** → `POST /api/player/sync`.
+- [x] Verificación: ver TV online y sincronizar desde el panel.
+
+### Fase 11 — Player base + identidad
+- [x] Pantalla completa (`100dvh`).
+- [x] `DeviceId.ts`: id persistente en localStorage.
+- [x] Registro/heartbeat al device (polling 30s).
+- [x] Verificación: el TV aparece online en el panel.
+
+### Fase 12 — Player reproducción
+- [x] Loop continuo: imágenes (con duración + fade) y videos fullscreen.
+- [x] Verificación: la playlist se reproduce en bucle.
+
+### Fase 13 — Player polling + estado
+- [x] Polling cada 30s de `/api/player/playlist`; si detecta cambio de
       `version`, recarga lista sin reiniciar.
-- [ ] Pantalla de estado (URL de la playlist, versión, "sin contenido").
-- [ ] Verificación: subir media, armar playlist, sincronizar y verlo
-      reproducirse en el player (mismo navegador en modo TV).
+- [x] Pantalla de estado (URL de la playlist, versión, "sin contenido").
+- [x] Verificación: cambiar playlist + Sincronizar → el player la refleja.
 
-**Conceptos**: ciclo de vida de React, `<video>`/`<img>`, loop de reproducción.
+**Conceptos (13)**: ciclo de vida de React, `<video>`/`<img>`, loop de reproducción.
+
+> Historial: Fase 7 y 8 originales se subdividieron en Fases 7-13 para
+> granularidad (20/09/2026).
 
 ## Cómo retomar
 
