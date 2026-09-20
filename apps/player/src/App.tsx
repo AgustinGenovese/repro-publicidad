@@ -17,7 +17,7 @@ function timeAgo(timestamp: number) {
 export default function App() {
   const deviceId = getDeviceId()
   const [registered, setRegistered] = useState(false)
-  const [showStatus, setShowStatus] = useState(true)
+  const [showStatus, setShowStatus] = useState(false)
   const { items, version, changes } = usePlaylist(HEARTBEAT_MS)
   const [lastChange, setLastChange] = useState<number | null>(null)
 
@@ -79,7 +79,7 @@ export default function App() {
             </span>
           </p>
           {lastChange !== null && (
-            <p className="text-cyan-300 text-xs">Cambio de versión detectado {timeAgo(lastChange)}</p>
+            <p className="text-slate-400 text-xs">Cambio de versión detectado {timeAgo(lastChange)}</p>
           )}
           <p className="text-white/30 text-xs mt-1 pt-2 border-t border-white/10">
             ID: {deviceId.slice(0, 8)}… · tocá para ocultar

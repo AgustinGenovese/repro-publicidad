@@ -52,7 +52,7 @@ export default function Devices() {
         <p className="text-sm text-slate-400">
           URL para los televisores:
         </p>
-        <code className="text-sm text-cyan-300">{playerUrl}</code>
+        <code className="text-sm text-slate-200">{playerUrl}</code>
         <button
           onClick={copyUrl}
           className="ml-auto px-3 py-1 rounded-lg border border-slate-700 hover:border-slate-500 text-xs text-slate-300"
