@@ -38,40 +38,46 @@ export default function App() {
   const active = TABS.find((t) => t.id === tab)!
 
   return (
-    <div className="min-h-dvh bg-[#0d1117] text-white flex">
-      <aside className="w-52 bg-slate-900/60 border-r border-slate-800 flex flex-col">
-        <div className="px-4 py-5 border-b border-slate-800">
-          <h1 className="text-lg font-bold leading-tight">Repro Publicidad</h1>
-          <p className="text-xs text-slate-500">Panel administrativo</p>
+    <div className="min-h-dvh bg-ink text-bone flex">
+      <aside className="w-56 bg-graphite-deep border-r border-brass-dim/40 flex flex-col">
+        <div className="px-5 py-6 border-b border-brass-dim/40 flex items-center gap-3">
+          <span className="pole h-9 w-2.5 rounded-[2px] shrink-0" aria-hidden="true" />
+          <div className="animate-rise">
+            <h1 className="font-display text-xl leading-none text-bone">Sarkirian</h1>
+            <p className="text-[11px] text-ash mt-1">Cartelería · panel</p>
+          </div>
         </div>
-        <nav className="flex-1 py-3 space-y-1">
+
+        <nav className="flex-1 py-4 space-y-1">
           {TABS.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+              className={`w-full text-left px-5 py-2.5 text-sm border-l-2 transition-colors ${
                 tab === t.id
-                  ? 'bg-slate-800 text-white'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                  ? 'border-brass bg-graphite text-bone'
+                  : 'border-transparent text-ash hover:text-bone hover:bg-graphite/60'
               }`}
             >
               {t.label}
             </button>
           ))}
         </nav>
-        <div className="p-4 border-t border-slate-800">
+
+        <div className="p-5 border-t border-brass-dim/40">
           <button
             onClick={handleLogout}
-            className="w-full text-sm text-slate-400 hover:text-white transition-colors"
+            className="w-full text-left text-sm text-ash hover:text-bone transition-colors"
           >
             Cerrar sesión
           </button>
         </div>
       </aside>
 
-      <main className="flex-1 p-8">
-        <header className="mb-6">
-          <h2 className="text-2xl font-semibold">{active.label}</h2>
+      <main className="flex-1 p-5 sm:p-8">
+        <header className="mb-8 flex items-baseline gap-3">
+          <h2 className="font-display text-3xl leading-none">{active.label}</h2>
+          <span className="h-px flex-1 bg-brass-dim/40" aria-hidden="true" />
         </header>
         {tab === 'media' && <Media />}
         {tab === 'playlist' && <Playlist />}

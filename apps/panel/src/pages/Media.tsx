@@ -13,7 +13,7 @@ export default function Media() {
       setMedia(await getMedia())
       setError('')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar')
+      setError(err instanceof Error ? err.message : 'No se pudo cargar el media.')
     } finally {
       setLoading(false)
     }
@@ -27,16 +27,19 @@ export default function Media() {
     <div className="space-y-6">
       <UploadDropzone onUploaded={refresh} />
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-oxblood">{error}</p>}
 
       {loading ? (
-        <p className="text-slate-400">Cargando…</p>
+        <p className="text-ash">Cargando…</p>
       ) : media.length === 0 ? (
-        <div className="border border-dashed border-slate-700 rounded-xl p-10 text-center text-slate-500">
-          Todavía no hay media. Subí una imagen para empezar.
+        <div className="border border-dashed border-brass-dim/50 p-12 text-center">
+          <p className="text-bone">Todavía no hay media</p>
+          <p className="text-sm text-ash mt-2">
+            Subí la primera foto o video con el recuadro de arriba, después armá la playlist.
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-px bg-brass-dim/30 border border-brass-dim/30">
           {media.map((item) => (
             <MediaCard key={item._id} item={item} onDeleted={refresh} />
           ))}

@@ -1,14 +1,91 @@
 @import "tailwindcss";
+@import "@fontsource/ultra/400.css";
+@import "@fontsource/archivo/400.css";
+@import "@fontsource/archivo/500.css";
 
-@keyframes image-fade {
-  0%   { opacity: 0 }
-  5%   { opacity: 1 }
-  90%  { opacity: 1 }
-  100% { opacity: 0 }
+@theme {
+  --color-ink: #131417;
+  --color-graphite: #1b1d21;
+  --color-bone: #ece3d2;
+  --color-brass: #c89b4a;
+  --color-brass-dim: #8f6f33;
+  --color-oxblood: #8a2f2a;
+  --color-ash: #8b9098;
+
+  --font-display: "Ultra", ui-serif, Georgia, serif;
+  --font-sans: "Archivo", ui-sans-serif, system-ui, sans-serif;
+
+  --animate-pole: pole 2.4s linear infinite;
 }
 
-.image-fade {
-  animation-name: image-fade;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
+@layer base {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@keyframes image-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes image-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.image-in {
+  animation-name: image-in;
+  animation-timing-function: ease;
+  animation-fill-mode: both;
+}
+
+.image-out {
+  animation-name: image-out;
+  animation-timing-function: ease;
+  animation-fill-mode: both;
+}
+
+@keyframes pole {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 72px;
+  }
+}
+
+.pole {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-brass) 0 12px,
+    #0a0a0b 12px 24px,
+    var(--color-brass) 24px 36px
+  );
+  background-size: 100% 72px;
+  border: 1px solid var(--color-brass-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

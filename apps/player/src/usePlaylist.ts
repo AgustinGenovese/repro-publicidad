@@ -5,6 +5,7 @@ export function usePlaylist(pollMs = 30_000) {
   const [items, setItems] = useState<PlayerItem[]>([])
   const [version, setVersion] = useState<number | null>(null)
   const [changes, setChanges] = useState(0)
+  const [lastChangeAt, setLastChangeAt] = useState<number | null>(null)
   const prevVersion = useRef<number | null>(null)
 
   useEffect(() => {
@@ -16,6 +17,7 @@ export function usePlaylist(pollMs = 30_000) {
         if (stopped) return
         if (prevVersion.current !== null && prevVersion.current !== playlist.version) {
           setChanges((c) => c + 1)
+          setLastChangeAt(Date.now())
         }
         prevVersion.current = playlist.version
         setVersion(playlist.version)
@@ -33,5 +35,5 @@ export function usePlaylist(pollMs = 30_000) {
     }
   }, [pollMs])
 
-  return { items, version, changes }
+  return { items, version, changes, lastChangeAt }
 }

@@ -19,43 +19,40 @@ export default function MediaCard({ item, onDeleted }: { item: MediaItem; onDele
       await deleteMedia(item._id)
       onDeleted()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al borrar')
+      setError(err instanceof Error ? err.message : 'No se pudo borrar.')
       setDeleting(false)
     }
   }
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-      <div className="aspect-video bg-slate-950">
+    <div className="bg-graphite p-3 flex flex-col gap-3 group">
+      <div className="aspect-video bg-ink overflow-hidden">
         {item.type === 'video' ? (
           <video src={item.url} muted preload="metadata" className="w-full h-full object-contain" />
         ) : (
           <img src={item.url} alt={item.originalName} className="w-full h-full object-contain" loading="lazy" />
         )}
       </div>
-      <div className="p-3 space-y-2">
-        <p className="text-sm text-slate-200 truncate" title={item.originalName}>
-          {item.originalName}
-        </p>
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-slate-500">{formatSize(item.size)}</span>
-          <span
-            className={`text-xs px-2 py-0.5 rounded-full ${
-              item.active ? 'bg-emerald-900/50 text-emerald-300' : 'bg-slate-800 text-slate-400'
-            }`}
-          >
-            {item.active ? 'activo' : 'inactivo'}
-          </span>
-          <button
-            onClick={handleDelete}
-            disabled={deleting}
-            className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50"
-          >
-            {deleting ? 'Borrando…' : 'Borrar'}
-          </button>
-        </div>
-        {error && <p className="text-xs text-red-400">{error}</p>}
+
+      <p className="text-sm text-bone truncate" title={item.originalName}>
+        {item.originalName}
+      </p>
+
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-xs text-ash">{formatSize(item.size)}</span>
+        <span className={`text-xs px-1.5 py-0.5 border ${item.active ? 'border-brass text-brass' : 'border-ash/40 text-ash'}`}>
+          {item.active ? 'activo' : 'inactivo'}
+        </span>
+        <button
+          onClick={handleDelete}
+          disabled={deleting}
+          className="text-xs text-ash hover:text-oxblood disabled:opacity-50 transition-colors"
+        >
+          {deleting ? 'Borrando…' : 'Borrar'}
+        </button>
       </div>
+
+      {error && <p className="text-xs text-oxblood">{error}</p>}
     </div>
   )
 }

@@ -8,20 +8,22 @@ export default function UploadDropzone({ onUploaded }: { onUploaded: () => void 
   const [error, setError] = useState('')
 
   async function handleFiles(files: FileList | File[]) {
-    const images = Array.from(files).filter((f) => f.type.startsWith('image/'))
-    if (images.length === 0) {
-      setError('Solo se aceptan imágenes (jpg, png, webp)')
+    const accepted = Array.from(files).filter(
+      (f) => f.type.startsWith('image/') || f.type === 'video/mp4' || f.type === 'video/webm'
+    )
+    if (accepted.length === 0) {
+      setError('Solo se aceptan fotos (JPG, PNG, WebP) o videos (MP4, WebM).')
       return
     }
     setError('')
     setUploading(true)
     try {
-      for (const file of images) {
+      for (const file of accepted) {
         await uploadMedia(file)
       }
       onUploaded()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al subir')
+      setError(err instanceof Error ? err.message : 'No se pudo subir el archivo.')
     } finally {
       setUploading(false)
     }
@@ -44,22 +46,24 @@ export default function UploadDropzone({ onUploaded }: { onUploaded: () => void 
           setDragging(false)
           handleFiles(e.dataTransfer.files)
         }}
-        className={`rounded-xl border-2 border-dashed p-10 text-center cursor-pointer transition-colors ${
-          dragging ? 'border-slate-500 bg-slate-800/40' : 'border-slate-700 hover:border-slate-500'
+        className={`border border-dashed p-10 text-center cursor-pointer transition-colors ${
+          dragging ? 'border-brass bg-graphite' : 'border-brass-dim/50 hover:border-brass'
         }`}
       >
         <input
           ref={inputRef}
           type="file"
-          accept="image/png,image/jpeg,image/webp"
+          accept="image/png,image/jpeg,image/webp,video/mp4,video/webm"
           multiple
           hidden
           onChange={(e) => e.target.files && handleFiles(e.target.files)}
         />
-        <p className="text-slate-300">{uploading ? 'Subiendo…' : 'Arrastrá imágenes o hacé clic para subir'}</p>
-        <p className="text-sm text-slate-500 mt-1">JPG, PNG o WebP</p>
+        <p className="text-bone">
+          {uploading ? 'Subiendo…' : 'Arrastrá fotos o videos, o hacé clic para elegirlos'}
+        </p>
+        <p className="text-sm text-ash mt-1.5">JPG, PNG, WebP, MP4 o WebM · hasta 200 MB</p>
       </div>
-      {error && <p className="text-sm text-red-400 mt-2">{error}</p>}
+      {error && <p className="text-sm text-oxblood mt-2">{error}</p>}
     </div>
   )
 }

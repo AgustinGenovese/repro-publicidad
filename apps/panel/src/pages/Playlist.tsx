@@ -36,7 +36,7 @@ export default function Playlist() {
       setSynced(false)
       setError('')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar')
+      setError(err instanceof Error ? err.message : 'No se pudo cargar la playlist.')
     } finally {
       setLoading(false)
     }
@@ -84,7 +84,7 @@ export default function Playlist() {
       setChanged(false)
       setSynced(false)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al guardar')
+      setError(err instanceof Error ? err.message : 'No se pudo guardar la playlist.')
     } finally {
       setSaving(false)
     }
@@ -99,30 +99,30 @@ export default function Playlist() {
       setVersion(result.version)
       setSynced(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al sincronizar')
+      setError(err instanceof Error ? err.message : 'No se pudo sincronizar.')
     } finally {
       setSyncing(false)
     }
   }
 
   return (
-    <div className="grid grid-cols-[280px_1fr] gap-6 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 lg:gap-8 items-start">
       <section>
-        <h3 className="text-sm font-medium text-slate-300 mb-3">Disponibles</h3>
+        <h3 className="text-sm text-ash mb-3">Disponibles</h3>
         {available.length === 0 ? (
-          <p className="text-sm text-slate-500">Todo el media está en la playlist.</p>
+          <p className="text-sm text-ash">Todo el media ya está en la playlist.</p>
         ) : (
           <ul className="space-y-2">
             {available.map((m) => (
               <li
                 key={m._id}
-                className="flex items-center gap-3 bg-slate-900 border border-slate-800 rounded-lg p-2"
+                className="flex items-center gap-3 bg-graphite border border-brass-dim/40 p-2"
               >
-                <img src={m.url} alt="" className="w-12 h-8 object-cover rounded" />
-                <span className="flex-1 text-xs text-slate-300 truncate">{m.originalName}</span>
+                <img src={m.url} alt="" className="w-12 h-8 object-cover" />
+                <span className="flex-1 text-xs text-ash truncate">{m.originalName}</span>
                 <button
                   onClick={() => addItem(m._id)}
-                  className="text-xs px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-white"
+                  className="text-xs px-2 py-1 border border-brass-dim/60 text-bone hover:border-brass hover:text-brass transition-colors"
                 >
                   Agregar
                 </button>
@@ -134,43 +134,45 @@ export default function Playlist() {
 
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-slate-300">
-            Playlist <span className="text-slate-500">· versión {version}</span>
+          <h3 className="text-sm text-ash">
+            En pantalla <span className="text-ash/70">· versión {version}</span>
           </h3>
           <div className="flex gap-2">
             <button
               onClick={handleSave}
               disabled={saving || !changed || rows.length === 0}
-              className="px-4 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 disabled:opacity-50 text-sm"
+              className="px-4 py-1.5 bg-brass text-ink font-semibold text-sm hover:brightness-110 disabled:opacity-40 disabled:hover:brightness-100 transition"
             >
               {saving ? 'Guardando…' : 'Guardar'}
             </button>
             <button
               onClick={handleSync}
               disabled={syncing || changed}
-              className="px-4 py-1.5 rounded-lg bg-slate-600 hover:bg-slate-500 disabled:opacity-50 text-sm"
-              title="Notificar a los TVs que recarguen la playlist"
+              className="flex items-center gap-2 px-4 py-1.5 border border-brass text-bone text-sm hover:text-brass disabled:opacity-40 transition-colors"
+              title="Avisar a los TVs que recarguen la playlist"
             >
+              <span className={`pole h-4 w-4 shrink-0 ${syncing ? 'animate-pole' : ''}`} aria-hidden="true" />
               {syncing ? 'Sincronizando…' : 'Sincronizar'}
             </button>
             <button
               onClick={refresh}
               disabled={saving || changed}
-              className="px-4 py-1.5 rounded-lg border border-slate-700 hover:border-slate-500 text-sm text-slate-300 disabled:opacity-50"
+              className="px-4 py-1.5 border border-brass-dim/40 text-ash text-sm hover:text-bone disabled:opacity-40 transition-colors"
             >
               Descartar
             </button>
           </div>
         </div>
 
-        {error && <p className="text-sm text-red-400 mb-3">{error}</p>}
-        {synced && <p className="text-sm text-emerald-400 mb-3">Sincronizado ✓</p>}
+        {error && <p className="text-sm text-oxblood mb-3">{error}</p>}
+        {synced && <p className="text-sm text-brass mb-3">Sincronizado</p>}
 
         {loading ? (
-          <p className="text-slate-400">Cargando…</p>
+          <p className="text-ash">Cargando…</p>
         ) : rows.length === 0 ? (
-          <div className="border border-dashed border-slate-700 rounded-xl p-10 text-center text-slate-500">
-            Playlist vacía. Agregá media desde la columna izquierda.
+          <div className="border border-dashed border-brass-dim/50 p-12 text-center">
+            <p className="text-bone">La playlist está vacía</p>
+            <p className="text-sm text-ash mt-2">Agregá fotos o videos desde la columna de la izquierda.</p>
           </div>
         ) : (
           <ul className="space-y-2">
@@ -193,15 +195,15 @@ export default function Playlist() {
                   setDragIndex(null)
                   setOverIndex(null)
                 }}
-                className={`flex items-center gap-3 bg-slate-900 border rounded-lg p-2 cursor-grab ${
-                  dragIndex !== null && overIndex === i ? 'border-slate-400' : 'border-slate-800'
+                className={`flex items-center gap-3 bg-graphite border p-2 cursor-grab ${
+                  dragIndex !== null && overIndex === i ? 'border-brass' : 'border-brass-dim/40'
                 }`}
               >
-                <span className="text-slate-600 select-none">⠿</span>
-                <img src={r.mediaId.url} alt="" className="w-14 h-10 object-cover rounded" />
+                <span className="text-ash select-none">⠿</span>
+                <img src={r.mediaId.url} alt="" className="w-14 h-10 object-cover" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-slate-200 truncate">{r.mediaId.originalName}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm text-bone truncate">{r.mediaId.originalName}</p>
+                  <p className="text-xs text-ash">
                     {r.mediaId.type} · {i + 1}
                   </p>
                 </div>
@@ -209,7 +211,7 @@ export default function Playlist() {
                   <button
                     onClick={() => move(i, i - 1)}
                     disabled={i === 0}
-                    className="text-slate-400 hover:text-white disabled:opacity-30 text-xs leading-none"
+                    className="text-ash hover:text-brass disabled:opacity-30 text-xs leading-none transition-colors"
                     title="Subir"
                   >
                     ▲
@@ -217,7 +219,7 @@ export default function Playlist() {
                   <button
                     onClick={() => move(i, i + 1)}
                     disabled={i === rows.length - 1}
-                    className="text-slate-400 hover:text-white disabled:opacity-30 text-xs leading-none"
+                    className="text-ash hover:text-brass disabled:opacity-30 text-xs leading-none transition-colors"
                     title="Bajar"
                   >
                     ▼
@@ -225,7 +227,7 @@ export default function Playlist() {
                 </div>
                 <button
                   onClick={() => removeItem(i)}
-                  className="text-xs text-red-400 hover:text-red-300"
+                  className="text-xs text-ash hover:text-oxblood transition-colors"
                   title="Quitar"
                 >
                   ✕

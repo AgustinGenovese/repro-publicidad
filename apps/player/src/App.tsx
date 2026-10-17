@@ -15,15 +15,10 @@ function timeAgo(timestamp: number) {
 }
 
 export default function App() {
-  const deviceId = getDeviceId()
+  const [deviceId] = useState(() => getDeviceId())
   const [registered, setRegistered] = useState(false)
   const [showStatus, setShowStatus] = useState(false)
-  const { items, version, changes } = usePlaylist(HEARTBEAT_MS)
-  const [lastChange, setLastChange] = useState<number | null>(null)
-
-  useEffect(() => {
-    if (changes > 0) setLastChange(Date.now())
-  }, [changes])
+  const { items, version, lastChangeAt } = usePlaylist(HEARTBEAT_MS)
 
   useEffect(() => {
     async function heartbeat() {
@@ -43,45 +38,53 @@ export default function App() {
 
   return (
     <div
-      className="h-dvh w-screen bg-black text-white overflow-hidden select-none relative"
+      className={`h-dvh w-screen overflow-hidden select-none relative text-bone ${
+        hasContent ? 'bg-black' : 'bg-ink'
+      }`}
       onClick={() => setShowStatus((s) => !s)}
     >
       {hasContent ? (
         <Player items={items} />
       ) : (
-        <div className="h-full flex flex-col items-center justify-center gap-4 px-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight">Repro Publicidad</h1>
-          <p className="text-white/60 text-lg">Sin contenido</p>
-          <p className="text-white/30 text-sm">
-            Cargá media y armá la playlist en el panel, después tocá Sincronizar.
+        <div className="h-full flex flex-col items-center justify-center gap-7 px-8 text-center">
+          <span className="pole h-28 w-4 rounded-[2px] animate-pole" aria-hidden="true" />
+          <div>
+            <h1 className="font-display text-5xl leading-none">Sarkirian</h1>
+            <p className="text-ash mt-2 text-sm">Cartelería</p>
+          </div>
+          <p className="text-bone/70 max-w-sm text-sm leading-relaxed">
+            Cargá fotos y videos en el panel y tocá Sincronizar para que aparezcan en esta
+            pantalla.
           </p>
         </div>
       )}
 
       {showStatus && (
-        <div className="absolute top-4 right-4 bg-black/70 border border-white/15 rounded-xl px-5 py-4 text-sm space-y-1 backdrop-blur-sm">
-          <p className="text-white/45 text-xs">Estado del reproductor</p>
-          <p className="text-white/70">
-            URL: <code className="text-white/90 text-xs">{window.location.href}</code>
+        <div className="absolute top-4 right-4 bg-ink/95 border border-brass-dim/50 px-5 py-4 text-sm space-y-1">
+          <p className="text-ash text-xs">Estado del reproductor</p>
+          <p className="text-ash">
+            URL: <code className="text-bone text-xs">{window.location.href}</code>
           </p>
-          <p className="text-white/70">Versión: <span className="text-white">{version ?? '—'}</span></p>
-          <p className="text-white/70">Items: <span className="text-white">{items.length}</span></p>
-          <p className="text-white/70">
+          <p className="text-ash">
+            Versión: <span className="text-bone">{version ?? '—'}</span>
+          </p>
+          <p className="text-ash">
+            Items: <span className="text-bone">{items.length}</span>
+          </p>
+          <p className="text-ash">
             Estado:{' '}
-            <span className={hasContent ? 'text-emerald-300' : 'text-amber-300'}>
-              {hasContent ? 'reproduciendo' : 'sin contenido'}
-            </span>
+            <span className={hasContent ? 'text-brass' : 'text-ash'}>{hasContent ? 'reproduciendo' : 'sin contenido'}</span>
           </p>
-          <p className="text-white/70">
+          <p className="text-ash">
             Registro:{' '}
-            <span className={registered ? 'text-emerald-300' : 'text-red-300'}>
+            <span className={registered ? 'text-brass' : 'text-oxblood'}>
               {registered ? 'conectado' : 'conectando'}
             </span>
           </p>
-          {lastChange !== null && (
-            <p className="text-slate-400 text-xs">Cambio de versión detectado {timeAgo(lastChange)}</p>
+          {lastChangeAt !== null && (
+            <p className="text-ash/80 text-xs">Cambio de versión detectado {timeAgo(lastChangeAt)}</p>
           )}
-          <p className="text-white/30 text-xs mt-1 pt-2 border-t border-white/10">
+          <p className="text-ash/60 text-xs mt-1 pt-2 border-t border-brass-dim/30">
             ID: {deviceId.slice(0, 8)}… · tocá para ocultar
           </p>
         </div>

@@ -34,7 +34,7 @@ export default function Devices() {
       setDevices(await getDevices())
       setError('')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al cargar')
+      setError(err instanceof Error ? err.message : 'No se pudieron cargar los TVs.')
     } finally {
       setLoading(false)
     }
@@ -47,58 +47,56 @@ export default function Devices() {
   }, [refresh])
 
   return (
-    <div className="space-y-4">
-      <div className="border border-slate-800 bg-slate-900 rounded-xl px-4 py-3 flex items-center gap-3">
-        <p className="text-sm text-slate-400">
-          URL para los televisores:
-        </p>
-        <code className="text-sm text-slate-200">{playerUrl}</code>
+    <div className="space-y-5">
+      <div className="border border-brass-dim/40 bg-graphite px-4 py-3 flex items-center gap-3">
+        <p className="text-sm text-ash">Abrí esta dirección en cada TV:</p>
+        <code className="text-sm text-bone">{playerUrl}</code>
         <button
           onClick={copyUrl}
-          className="ml-auto px-3 py-1 rounded-lg border border-slate-700 hover:border-slate-500 text-xs text-slate-300"
+          className="ml-auto px-3 py-1 border border-brass-dim/60 text-xs text-bone hover:border-brass hover:text-brass transition-colors"
         >
           {copied ? 'Copiada' : 'Copiar'}
         </button>
       </div>
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-400">
-          Se actualiza cada 15 segundos. Un TV se considera <b className="text-emerald-400">online</b> si conectó en los últimos 2 minutos.
+
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-sm text-ash">
+          Se actualiza cada 15 segundos. Un TV está <span className="text-brass">en línea</span> si se conectó en los últimos 2 minutos.
         </p>
         <button
           onClick={refresh}
-          className="px-4 py-1.5 rounded-lg border border-slate-700 hover:border-slate-500 text-sm text-slate-300"
+          className="shrink-0 px-4 py-1.5 border border-brass-dim/40 text-sm text-ash hover:text-bone transition-colors"
         >
           Refrescar
         </button>
       </div>
 
-      {error && <p className="text-sm text-red-400">{error}</p>}
+      {error && <p className="text-sm text-oxblood">{error}</p>}
 
       {loading ? (
-        <p className="text-slate-400">Cargando…</p>
+        <p className="text-ash">Cargando…</p>
       ) : devices.length === 0 ? (
-        <div className="border border-dashed border-slate-700 rounded-xl p-10 text-center text-slate-500">
-          No hay TVs registrados todavía.
+        <div className="border border-dashed border-brass-dim/50 p-12 text-center">
+          <p className="text-bone">Todavía no hay TVs conectados</p>
+          <p className="text-sm text-ash mt-2">Abrí la dirección de arriba en el navegador del televisor.</p>
         </div>
       ) : (
-        <ul className="divide-y divide-slate-800 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+        <ul className="border border-brass-dim/40 divide-y divide-brass-dim/30">
           {devices.map((d) => (
-            <li key={d._id} className="flex items-center gap-4 px-4 py-3">
+            <li key={d._id} className="flex items-center gap-4 px-4 py-3 bg-graphite">
               <span
-                className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                  d.online ? 'bg-emerald-400' : 'bg-slate-600'
-                }`}
+                className={`w-2.5 h-2.5 shrink-0 ${d.online ? 'bg-brass' : 'bg-ash/50'}`}
               />
-              <span className="font-medium text-slate-200">{d.name}</span>
-              <code className="flex-1 text-xs text-slate-500 truncate">{d.token}</code>
-              <span className="text-xs text-slate-500">{d.currentIp || '—'}</span>
-              <span className="text-xs text-slate-400">{timeAgo(d.lastSeen)}</span>
+              <span className="font-medium text-bone">{d.name}</span>
+              <code className="flex-1 text-xs text-ash truncate">{d.token}</code>
+              <span className="text-xs text-ash">{d.currentIp || '—'}</span>
+              <span className="text-xs text-ash">{timeAgo(d.lastSeen)}</span>
               <span
-                className={`text-xs px-2 py-0.5 rounded-full ${
-                  d.online ? 'bg-emerald-900/50 text-emerald-300' : 'bg-slate-800 text-slate-400'
+                className={`text-xs px-1.5 py-0.5 border ${
+                  d.online ? 'border-brass text-brass' : 'border-ash/40 text-ash'
                 }`}
               >
-                {d.online ? 'online' : 'offline'}
+                {d.online ? 'en línea' : 'sin conexión'}
               </span>
             </li>
           ))}
