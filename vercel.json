@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "server": {
+      "root": "apps/server",
+      "framework": "express",
+      "installCommand": "npm ci --prefix ../..",
+      "buildCommand": "npm run build --prefix ../panel && npm run build --prefix ../player"
+    }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": { "service": "server" } }
+  ]
+}

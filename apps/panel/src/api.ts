@@ -1,3 +1,5 @@
+import { upload } from '@vercel/blob/client';
+
 const TOKEN_KEY = 'repro_token';
 
 export function getToken(): string | null {
@@ -62,10 +64,30 @@ export function getMedia() {
   return request<MediaItem[]>('/api/media');
 }
 
-export function uploadMedia(file: File) {
-  const form = new FormData();
-  form.append('file', file);
-  return request<MediaItem>('/api/media', { method: 'POST', body: form });
+function safeName(name: string) {
+  return name.replace(/[^a-zA-Z0-9._-]/g, '_');
+}
+
+export async function uploadMedia(file: File) {
+  const token = getToken();
+  const blob = await upload(`media/${Date.now()}-${safeName(file.name)}`, file, {
+    access: 'public',
+    handleUploadUrl: '/api/upload',
+    multipart: true,
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+
+  return request<MediaItem>('/api/media', {
+    method: 'POST',
+    body: JSON.stringify({
+      type: file.type.startsWith('video/') ? 'video' : 'image',
+      url: blob.url,
+      pathname: blob.pathname,
+      originalName: file.name,
+      mimeType: file.type,
+      size: file.size,
+    }),
+  });
 }
 
 export function deleteMedia(id: string) {

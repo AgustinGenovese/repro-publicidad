@@ -26,7 +26,9 @@ router.get('/playlist', async (req: Request, res: Response) => {
         return {
           mediaId: media._id,
           type: media.type,
-          url: `${req.protocol}://${req.get('host')}${media.url}`,
+          url: /^https?:\/\//.test(media.url)
+            ? media.url
+            : `${req.protocol}://${req.get('host')}${media.url}`,
           duration: media.duration,
           sortOrder: item.sortOrder,
         };

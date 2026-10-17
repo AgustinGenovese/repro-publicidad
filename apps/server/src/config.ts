@@ -12,6 +12,4 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET || 'dev-secret-inseguro',
   adminUsername: process.env.ADMIN_USERNAME || 'admin',
   adminPassword: process.env.ADMIN_PASSWORD || 'admin123',
-  uploadsDir: resolve(here, '..', 'uploads'),
-  webRoot: resolve(here, '..', 'public'),
 } as const;
