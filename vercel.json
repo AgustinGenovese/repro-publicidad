@@ -10,25 +10,21 @@
       "root": "apps/panel",
       "framework": "vite",
       "buildCommand": "npm run build",
-      "outputDirectory": "../../public/panel",
-      "rewrites": [
-        { "source": "/(.*)", "destination": "/index.html" }
-      ]
+      "outputDirectory": "../../public/panel"
     },
     "player": {
       "root": "apps/player",
       "framework": "vite",
       "buildCommand": "npm run build",
-      "outputDirectory": "../../public/player",
-      "rewrites": [
-        { "source": "/(.*)", "destination": "/index.html" }
-      ]
+      "outputDirectory": "../../public/player"
     }
   },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": { "service": "server" } },
-    { "source": "/panel/(.*)", "destination": { "service": "panel" } },
-    { "source": "/player/(.*)", "destination": { "service": "player" } },
-    { "source": "/(.*)", "destination": { "service": "panel" } }
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/panel/assets/(.*)", "dest": "/panel/assets/$1" },
+    { "src": "/player/assets/(.*)", "dest": "/player/assets/$1" },
+    { "src": "/panel/(.*)", "dest": "/panel/index.html" },
+    { "src": "/player/(.*)", "dest": "/player/index.html" },
+    { "src": "/(.*)", "dest": "/panel/index.html" }
   ]
 }
