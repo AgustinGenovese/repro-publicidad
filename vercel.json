@@ -11,8 +11,6 @@
   },
   "rewrites": [
     { "source": "/api/(.*)", "destination": { "service": "server" } },
-    { "source": "/panel/(.*)", "destination": "/panel/index.html" },
-    { "source": "/player/(.*)", "destination": "/player/index.html" },
     { "source": "/(.*)", "destination": "/panel/index.html" }
   ]
 }
