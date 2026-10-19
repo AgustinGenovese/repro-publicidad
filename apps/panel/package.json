@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base=/panel/ --outDir ../server/public/panel",
+    "build": "vite build --base=/panel/ --outDir ../../public/panel",
     "preview": "vite preview"
   },
   "dependencies": {

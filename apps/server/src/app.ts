@@ -16,20 +16,6 @@ app.get('/ping', (_req, res) => {
   res.json({ ok: true });
 });
 
-// En Vercel los estáticos de `public/**` los sirve el CDN (express.static se ignora).
-// Estos redirects solo aplican en local o cuando el CDN no encuentra el archivo.
-app.get('/', (_req, res) => {
-  res.redirect('/panel/');
-});
-
-app.get('/panel', (_req, res) => {
-  res.redirect('/panel/');
-});
-
-app.get('/player', (_req, res) => {
-  res.redirect('/player/');
-});
-
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/media', mediaRoutes);

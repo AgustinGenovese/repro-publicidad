@@ -1,6 +1,8 @@
-import { upload } from '@vercel/blob/client';
-
 const TOKEN_KEY = 'repro_token';
+
+function safeName(name: string) {
+  return name.replace(/[^a-zA-Z0-9._-]/g, '_');
+}
 
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
@@ -64,19 +66,35 @@ export function getMedia() {
   return request<MediaItem[]>('/api/media');
 }
 
-function safeName(name: string) {
-  return name.replace(/[^a-zA-Z0-9._-]/g, '_');
-}
-
 export async function uploadMedia(file: File) {
   const token = getToken();
-  const blob = await upload(`media/${Date.now()}-${safeName(file.name)}`, file, {
-    access: 'public',
-    handleUploadUrl: '/api/upload',
-    multipart: true,
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  
+  // 1. Pedir token de subida al server
+  const uploadRes = await request<{ token: string; uploadUrl: string }>('/api/upload', {
+    method: 'POST',
+    body: JSON.stringify({
+      pathname: `media/${Date.now()}-${safeName(file.name)}`,
+      contentType: file.type,
+    }),
   });
 
+  // 2. Subir directo a Vercel Blob con el token
+  const blobRes = await fetch(uploadRes.uploadUrl, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': file.type,
+      'Authorization': `Bearer ${uploadRes.token}`,
+    },
+    body: file,
+  });
+
+  if (!blobRes.ok) {
+    throw new Error('Error subiendo a Blob');
+  }
+
+  const blob = await blobRes.json();
+
+  // 3. Persistir metadatos en server
   return request<MediaItem>('/api/media', {
     method: 'POST',
     body: JSON.stringify({

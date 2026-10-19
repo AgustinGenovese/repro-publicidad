@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base=/player/ --outDir ../server/public/player",
+    "build": "vite build --base=/player/ --outDir ../../public/player",
     "preview": "vite preview"
   },
   "dependencies": {

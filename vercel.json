@@ -1,14 +1,18 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build --prefix apps/panel && npm run build --prefix apps/player",
+  "outputDirectory": "public",
   "services": {
     "server": {
       "root": "apps/server",
       "framework": "express",
-      "installCommand": "npm ci --prefix ../..",
-      "buildCommand": "npm run build --prefix ../panel && npm run build --prefix ../player"
+      "installCommand": "npm ci --prefix ../.."
     }
   },
   "rewrites": [
-    { "source": "/(.*)", "destination": { "service": "server" } }
+    { "source": "/api/(.*)", "destination": { "service": "server" } },
+    { "source": "/panel/(.*)", "destination": "/panel/$1" },
+    { "source": "/player/(.*)", "destination": "/player/$1" },
+    { "source": "/(.*)", "destination": "/panel/index.html" }
   ]
 }
