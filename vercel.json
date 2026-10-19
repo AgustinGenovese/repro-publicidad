@@ -10,13 +10,19 @@
       "root": "apps/panel",
       "framework": "vite",
       "buildCommand": "npm run build",
-      "outputDirectory": "../../public/panel"
+      "outputDirectory": "../../public/panel",
+      "rewrites": [
+        { "source": "/(.*)", "destination": "/index.html" }
+      ]
     },
     "player": {
       "root": "apps/player",
       "framework": "vite",
       "buildCommand": "npm run build",
-      "outputDirectory": "../../public/player"
+      "outputDirectory": "../../public/player",
+      "rewrites": [
+        { "source": "/(.*)", "destination": "/index.html" }
+      ]
     }
   },
   "rewrites": [
